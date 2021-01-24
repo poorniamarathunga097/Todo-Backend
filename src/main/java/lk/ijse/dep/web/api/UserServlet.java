@@ -24,7 +24,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
-@WebServlet(name = "UserServlet", urlPatterns = "/api/v1/users/*")
+@WebServlet(name = "UserServlet", urlPatterns = {"/api/v1/users/*","/api/v1/users/auth"})
 public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Jsonb jsonb = JsonbBuilder.create();
@@ -95,14 +95,24 @@ public class UserServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        BasicDataSource cp = (BasicDataSource) getServletContext().getAttribute("cp");
-        Connection connection = null;
-        try {
-            connection = cp.getConnection();
-            System.out.println(connection);
-            connection.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        String query = request.getParameter("q");
+        if (query != null){
+            BasicDataSource cp = (BasicDataSource) getServletContext().getAttribute("cp");
+            try (Connection connection = cp.getConnection()) {
+                PreparedStatement pstm = connection.prepareStatement("SELECT username FROM `user` WHERE username = ?");
+                pstm.setObject(1, query);
+                ResultSet rst = pstm.executeQuery();
+                if (rst.next()){
+                    Jsonb jsonb = JsonbBuilder.create();
+                    response.setContentType("application/json");
+                    response.getWriter().println(jsonb.toJson(rst.getString("username")));
+                }else{
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (SQLException throwables) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                throwables.printStackTrace();
+            }
         }
     }
 }
