@@ -70,9 +70,10 @@ public class UserServlet extends HttpServlet {
                     pstm.setObject(1, userDTO.getUsername());
                     if (pstm.executeQuery().next()) {
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        response.getWriter().println("User already exists");
+                        response.getWriter().println("User is already exists");
                         return;
                     }
+
                     pstm = connection.prepareStatement("INSERT INTO user VALUES (?,?)");
                     pstm.setObject(1, userDTO.getUsername());
                     String sha256Hex = DigestUtils.sha256Hex(userDTO.getPassword());
