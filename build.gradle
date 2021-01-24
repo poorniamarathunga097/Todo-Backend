@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group 'lk.ijse.dep'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.22'
+    implementation group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.8.0'
+    implementation group: 'javax.json', name: 'javax.json-api', version: '1.1.4'
+    implementation group: 'org.glassfish', name: 'javax.json', version: '1.1.4'
+    implementation group: 'javax.json.bind', name: 'javax.json.bind-api', version: '1.0'
+    implementation group: 'org.eclipse', name: 'yasson', version: '1.0.8'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2',
+            // Uncomment the next line if you want to use RSASSA-PSS (PS256, PS384, PS512) algorithms:
+            //'org.bouncycastle:bcprov-jdk15on:1.60',
+            'io.jsonwebtoken:jjwt-jackson:0.11.2' // or 'io.jsonwebtoken:jjwt-gson:0.11.2' for gson
+
+
+}
